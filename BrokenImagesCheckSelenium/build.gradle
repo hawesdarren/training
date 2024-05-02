@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    maven { url 'https://nexus.toolchain.apif.kiwibank.co.nz/repository/maven-central/' }
+    mavenCentral()
+}
+
+sourceSets {
+    test {
+        java {
+            "$projectDir/src"
+        }
+    }
+}
+
+
+dependencies {
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.2'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.10.2'
+    testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.19.1'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
+    testImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
+    testImplementation group: 'commons-io', name: 'commons-io', version: '2.16.1'
+
+}
+
+test {
+    useJUnitPlatform()
+}
