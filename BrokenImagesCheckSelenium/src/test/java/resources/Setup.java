@@ -23,10 +23,12 @@ public class Setup {
     private static WebDriver startChrome(WebDriver driver) throws MalformedURLException {
         //This creates a chrome driver for standalone selenium grid
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+        //options.addArguments("--no-sandbox");
+        //options.addArguments("--disable-dev-shm-usage"); //This is causing Chrome browser to fail start up in some containers
         options.setAcceptInsecureCerts(true);
-        URL remoteDriverUrl = new URL("http://localhost:4444");
+        //options.addArguments("--headless");
+        //URL remoteDriverUrl = new URL("http://localhost:4444");
+        URL remoteDriverUrl = new URL("http://selenium-chrome:4444");
         driver = new RemoteWebDriver(remoteDriverUrl, options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
         //driver.manage().window().maximize();
