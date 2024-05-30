@@ -44,7 +44,10 @@ public class Setup {
 
     public static void clearScreenShotDir() throws IOException {
         String dir = System.getProperty("user.dir") + "/screenshots/";
-        FileUtils.cleanDirectory(new File(dir));
+        if(new File(dir).exists()){
+            FileUtils.cleanDirectory(new File(dir));
+        }
+
     }
 
 }
