@@ -27,8 +27,8 @@ public class Setup {
         //options.addArguments("--disable-dev-shm-usage"); //This is causing Chrome browser to fail start up in some containers
         options.setAcceptInsecureCerts(true);
         //options.addArguments("--headless");
-        //URL remoteDriverUrl = new URL("http://localhost:4444");
-        URL remoteDriverUrl = new URL("http://selenium-chrome:4444");
+        URL remoteDriverUrl = new URL("http://localhost:4444");
+        //URL remoteDriverUrl = new URL("http://selenium-chrome:4444");
         driver = new RemoteWebDriver(remoteDriverUrl, options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
         //driver.manage().window().maximize();
