@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.Optional;
 
 public class Setup {
 
@@ -27,7 +28,11 @@ public class Setup {
         //options.addArguments("--disable-dev-shm-usage"); //This is causing Chrome browser to fail start up in some containers
         options.setAcceptInsecureCerts(true);
         //options.addArguments("--headless");
-        URL remoteDriverUrl = new URL("http://localhost:4444");
+        //Use "http://localhost:4444" for local development and testing
+        //Use "http://selenium-chrome:4444" for docker-compose development and testing
+        String seleniumHost = Optional.of(System.getenv("SELENIUM_HOST")).orElse("http://localhost:4444");
+        URL remoteDriverUrl = new URL(seleniumHost);
+        //URL remoteDriverUrl = new URL("http://localhost:4444");
         //URL remoteDriverUrl = new URL("http://selenium-chrome:4444");
         driver = new RemoteWebDriver(remoteDriverUrl, options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
