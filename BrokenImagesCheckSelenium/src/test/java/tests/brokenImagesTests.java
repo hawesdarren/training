@@ -8,6 +8,7 @@ import resources.Setup;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -21,8 +22,14 @@ public class brokenImagesTests {
         Setup.clearScreenShotDir();
     }
     @BeforeEach
-    public void setUp() throws MalformedURLException {
-        driver = Setup.startBrowser(driver);
+    public void setUp() throws MalformedURLException, URISyntaxException {
+        try {
+            driver = Setup.startBrowser(driver);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @AfterEach
