@@ -1,5 +1,6 @@
 package resources;
 
+import com.google.common.base.Optional;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -10,18 +11,19 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.Optional;
 
 public class Setup {
 
-    public static WebDriver startBrowser(WebDriver driver) throws MalformedURLException {
+    public static WebDriver startBrowser(WebDriver driver) throws MalformedURLException, URISyntaxException {
         driver = startChrome(driver);
         return driver;
     }
 
-    private static WebDriver startChrome(WebDriver driver) throws MalformedURLException {
+    private static WebDriver startChrome(WebDriver driver) throws MalformedURLException, URISyntaxException {
         //This creates a chrome driver for standalone selenium grid
         ChromeOptions options = new ChromeOptions();
         //options.addArguments("--no-sandbox");
@@ -30,8 +32,8 @@ public class Setup {
         //options.addArguments("--headless");
         //Use "http://localhost:4444" for local development and testing
         //Use "http://selenium-chrome:4444" for docker-compose development and testing
-        String seleniumHost = Optional.of(System.getenv("SELENIUM_HOST")).orElse("http://localhost:4444");
-        URL remoteDriverUrl = new URL(seleniumHost);
+        String seleniumHost = Optional.fromNullable(System.getenv("SELENIUM_HOST")).or("http://localhost:4444");
+        URL remoteDriverUrl = new URI(seleniumHost).toURL();
         //URL remoteDriverUrl = new URL("http://localhost:4444");
         //URL remoteDriverUrl = new URL("http://selenium-chrome:4444");
         driver = new RemoteWebDriver(remoteDriverUrl, options);
