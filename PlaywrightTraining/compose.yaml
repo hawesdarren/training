@@ -1,0 +1,10 @@
+services:
+  playwright:
+    build:
+      dockerfile: Dockerfile
+    container_name: "playwright"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "2G"
