@@ -1,0 +1,67 @@
+podTemplate(yaml: '''
+    apiVersion: v1
+    kind: Pod
+    spec:
+      containers:
+      - name: chrome
+        image: selenium/standalone-chrome:latest
+        ports:
+        - containerPort: 4444
+          targetPort: 4444
+        - containerPort: 7900
+          targetPort: 7900
+        namespace: chrome
+        hostNetwotk: true
+      - name: gradle
+        image: gradle:latest
+        command:
+          - sleep
+        args:
+          - 99d
+        namespace: chrome
+        hostNetwork: true
+
+''')
+{
+    node(POD_LABEL){
+    	stage('Start Selenium Grid/Chrome'){
+    		container('chrome'){
+    			echo 'Starting Selenium/Chrome standalone'
+
+    		}
+        }
+		container('gradle'){
+			stage('Run tests'){
+					withEnv(['SELENIUM_HOST=http://localhost:4444']) {
+					    echo 'running tests'
+        				git branch: 'main', url: 'https://github.com/hawesdarren/training.git'
+                        dir('BrokenImagesCheckSelenium'){
+                            catchError(buildResult: 'SUCCESS'){
+                                    sh 'gradle test'
+                                }
+                        }
+					}
+
+			}
+			stage('Archive artifacts'){
+				echo 'Archiving artifacts'
+				dir('BrokenImagesCheckSelenium'){
+					archiveArtifacts    allowEmptyArchive: true,
+					                    artifacts: 'build/reports/**/*.*',
+					                    followSymlinks: false
+				}
+
+			}
+			stage('Generate report'){
+				echo 'Generating report'
+				dir('BrokenImagesCheckSelenium'){
+				    junit   allowEmptyResults: true,
+				            keepLongStdio: true,
+				            keepProperties: true,
+				            testResults: 'build/test-results/test/TEST*.xml'
+				}
+
+			}
+		}
+	}
+}
