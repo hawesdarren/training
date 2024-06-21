@@ -1,0 +1,69 @@
+
+pipeline {
+    agent{
+	label 'jenkins-agent-ubuntu'
+	}
+	
+	stages{
+		stage('Git checkout') {
+			steps{
+				echo 'delete any prev project'
+			    catchError(buildResult: 'SUCCESS') {
+                    deleteDir()
+                }
+				echo 'check out'
+				git branch: 'main', url: 'https://github.com/hawesdarren/training.git'
+			}
+			
+		}
+		stage('Run a test') {
+			steps{
+				echo 'run a test'
+				dir('PlaywrightTraining') {
+                    catchError(buildResult: 'SUCCESS'){
+                        sh "docker compose up"    
+                    }
+                }
+                
+				
+			}
+			
+		}
+		stage('Copy artifacts') {
+			steps{
+				echo 'copy artifacts'
+				sh "mkdir artifacts"
+				sh "docker container cp playwright:/app/test-results/ ${env.WORKSPACE}/artifacts/test-results"
+        		sh "docker container cp playwright:/app/junit-results/ ${env.WORKSPACE}/artifacts"	    
+				sh "docker container cp playwright:/app/playwright-report/ ${env.WORKSPACE}/artifacts"
+				sh 'ls' //list dir
+				
+    			archiveArtifacts artifacts: "artifacts/", followSymlinks: false
+				
+			}
+			
+		}
+		stage('Generate a report') {
+			steps{
+    			echo 'Generate report'
+    			junit   allowEmptyResults: true, 
+    			        keepLongStdio: true, 
+    			        keepProperties: true, 
+    			        testResults: 'artifacts/junit-results/*.xml'
+    		
+    			publishHTML([   allowMissing: true, 
+    			                alwaysLinkToLastBuild: true, 
+    			                keepAll: true, 
+    			                reportDir: '/artifacts/playwright-report/', 
+    			                reportFiles: 'index.html', 
+    			                reportName: 'Playwright Report', 
+    			                reportTitles: '', 
+    			                includes: 'data/*',
+    			                useWrapperFileDirectly: true])
+			    
+			}
+
+		}
+	}
+	
+}
