@@ -21,7 +21,6 @@ pipeline {
 				echo 'run a test'
 				withEnv(['SELENIUM_HOST=http://selenium-chrome:4444']) {
                     dir('BrokenImagesCheckSelenium') {
-                        echo "SELENIUM_HOST: ${env.SELENIUM_HOST}"
                         sh "docker compose -f docker-compose.all.yaml up --exit-code-from gradle --build"
                     }
                 }
@@ -32,7 +31,6 @@ pipeline {
 		stage('Copy artifacts') {
 			steps{
 				echo 'copy artifacts'
-				sh 'docker ps -a'
 				sh "docker container cp gradle:/app/build/test-results/test// ${env.WORKSPACE}/artifacts/"
     			sh "docker container cp gradle:/app/build/reports/tests/ ${env.WORKSPACE}/artifacts/"
     			archiveArtifacts artifacts: "artifacts/", followSymlinks: false
